@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXORA - Play. Skill Up. Grow.</title>
+<title>NEXORA - खेलें, सीखें, आगे बढ़ें</title>
 
 <style>
 *{
@@ -48,6 +48,7 @@ header{
   padding:10px 14px;
   border-radius:10px;
   font-size:20px;
+  cursor:pointer;
 }
 
 .container{
@@ -62,7 +63,7 @@ header{
 }
 
 .hero h1{
-  font-size:38px;
+  font-size:36px;
   margin-bottom:8px;
 }
 
@@ -72,6 +73,7 @@ header{
 
 .hero p{
   color:#aeb8d0;
+  font-size:16px;
 }
 
 .stats{
@@ -126,6 +128,7 @@ header{
 
 .card h3{
   margin-bottom:6px;
+  font-size:18px;
 }
 
 .card p{
@@ -183,7 +186,7 @@ button{
 }
 
 .question{
-  font-size:21px;
+  font-size:20px;
   line-height:1.5;
   margin:20px 0;
 }
@@ -209,6 +212,7 @@ button{
   border-radius:10px;
   background:#202b4b;
   color:#dce3f7;
+  display:none;
 }
 
 input{
@@ -220,6 +224,7 @@ input{
   color:white;
   font-size:16px;
   outline:none;
+  margin-top:10px;
 }
 
 .ref-box{
@@ -241,20 +246,32 @@ input{
   color:#8b83ff;
 }
 
-.premium{
-  background:linear-gradient(135deg,#1d2650,#38296b);
-  border:1px solid #6256d9;
-  padding:22px;
-  border-radius:18px;
-  margin-top:20px;
+.puzzle-board{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:10px;
+  max-width:300px;
+  margin:20px auto;
 }
 
-.premium h2{
-  margin-bottom:8px;
+.puzzle-tile{
+  background:#202b4b;
+  border:1px solid #3d4f80;
+  border-radius:10px;
+  height:75px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  font-weight:bold;
+  color:#fff;
+  cursor:pointer;
 }
 
-.premium p{
-  color:#c9d0e5;
+.puzzle-tile.empty{
+  background:#0b1020;
+  border:1px dashed #202b4b;
+  cursor:default;
 }
 </style>
 </head>
@@ -269,95 +286,163 @@ input{
   <!-- Home Screen -->
   <div id="home-screen" class="screen active">
     <div class="hero">
-      <h1>Play. <span>Skill Up.</span> Grow.</h1>
-      <p>Khele aur naye skills sikhein daily challenges ke saath!</p>
+      <h1>खेलें। <span>सीखें।</span> आगे बढ़ें।</h1>
+      <p>रोजाना नए गेम खेलें और अपना दिमाग तेज करें!</p>
     </div>
 
     <div class="stats">
       <div class="stat">
         <b id="score">0</b>
-        <small>Score</small>
+        <small>कुल स्कोर</small>
       </div>
       <div class="stat">
-        <b>Level 1</b>
-        <small>Level</small>
+        <b>लेवल 1</b>
+        <small>लेवल</small>
       </div>
       <div class="stat">
-        <b>100</b>
-        <small>Coins</small>
+        <b id="coins">100</b>
+        <small>कॉइन्स</small>
       </div>
     </div>
 
     <div class="games">
+      <div class="card" onclick="showScreen('puzzle')">
+        <div class="icon">🧩</div>
+        <h3>नंबर पहेली (Puzzle)</h3>
+        <p>नंबर क्रम में सजाएं</p>
+      </div>
       <div class="card" onclick="showScreen('quiz')">
         <div class="icon">🧠</div>
-        <h3>Skill Quiz</h3>
-        <p>Aapke dimag ki kasrat</p>
-      </div>
-      <div class="card" onclick="showScreen('referral')">
-        <div class="icon">🎁</div>
-        <h3>Refer & Earn</h3>
-        <p>Friends ko bulayein</p>
+        <h3>दिमागी क्विज़</h3>
+        <p>सामान्य ज्ञान और ट्रिक्स</p>
       </div>
     </div>
 
-    <div class="premium">
-      <h2>Go Premium 🚀</h2>
-      <p>Unlock karein special games aur unlimited rewards.</p>
-      <button class="primary">Upgrade Now</button>
+    <div class="card" style="margin-top:14px;" onclick="showScreen('referral')">
+      <div class="icon">🎁</div>
+      <h3>रेफर करें और कमाएं</h3>
+      <p>दोस्तों को जोड़ें और कॉइन्स पाएं</p>
+    </div>
+  </div>
+
+  <!-- Puzzle Screen -->
+  <div id="puzzle-screen" class="screen">
+    <button class="back" onclick="showScreen('home')">← वापस जाएं</button>
+    <div class="game-box" style="text-align:center;">
+      <h3>15-स्लाइड नंबर पहेली</h3>
+      <p style="color:#aeb8d0; font-size:14px; margin-top:5px;">खाली जगह के बगल वाले ब्लॉक पर क्लिक करके 1 से 8 तक क्रम में लगाएं!</p>
+      
+      <div class="puzzle-board" id="board"></div>
+
+      <div id="puzzle-msg" class="message"></div>
+      <button class="secondary" onclick="initPuzzle()">पहेली रीसेट करें</button>
     </div>
   </div>
 
   <!-- Quiz Screen -->
   <div id="quiz-screen" class="screen">
-    <button class="back" onclick="showScreen('home')">← Wapas Jayein</button>
+    <button class="back" onclick="showScreen('home')">← वापस जाएं</button>
     <div class="game-box">
-      <h3>Skill Quiz Challenge</h3>
-      <div class="question" id="quiz-question">Web development me HTML ka matlab kya hai?</div>
-      <button class="option" onclick="answerQuiz(true)">HyperText Markup Language</button>
-      <button class="option" onclick="answerQuiz(false)">HighText Machine Language</button>
-      <button class="option" onclick="answerQuiz(false)">Hyperlink Text Model</button>
-      <div id="quiz-msg" class="message" style="display:none;"></div>
+      <h3>दिमागी क्विज़ चैलेंज</h3>
+      <div class="question" id="quiz-question">भारत का राष्ट्रीय खेल कौन सा माना जाता है?</div>
+      <button class="option" onclick="answerQuiz(false)">क्रिकेट</button>
+      <button class="option" onclick="answerQuiz(true)">हॉकी</button>
+      <button class="option" onclick="answerQuiz(false)">फुटबॉल</button>
+      <button class="option" onclick="answerQuiz(false)">कबड्डी</button>
+      <div id="quiz-msg" class="message"></div>
     </div>
   </div>
 
   <!-- Referral Screen -->
   <div id="referral-screen" class="screen">
-    <button class="back" onclick="showScreen('home')">← Wapas Jayein</button>
+    <button class="back" onclick="showScreen('home')">← वापस जाएं</button>
     <div class="ref-box">
-      <h3>Apna Referral Code Share Karein</h3>
+      <h3>रेफरल कोड शेयर करें</h3>
+      <p style="color:#aeb8d0; margin-top:5px;">हर सफल रेफर पर 50 कॉइन्स पाएं!</p>
       <div class="ref-code">NEXORA2026</div>
-      <button class="primary" onclick="alert('Code copy ho gaya!')">Copy Code</button>
+      <button class="primary" onclick="alert('रेफरल कोड कॉपी हो गया!')">कोड कॉपी करें</button>
     </div>
   </div>
 </div>
 
 <script>
   let score = 0;
+  let coins = 100;
 
   function showScreen(screenName) {
-    document.querySelectorAll('.screen').forEach(screen => {
-      screen.classList.remove('active');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    if(screenName === 'home') document.getElementById('home-screen').classList.add('active');
+    if(screenName === 'puzzle') {
+      document.getElementById('puzzle-screen').classList.add('active');
+      initPuzzle();
+    }
+    if(screenName === 'quiz') document.getElementById('quiz-screen').classList.add('active');
+    if(screenName === 'referral') document.getElementById('referral-screen').classList.add('active');
+  }
+
+  // --- Puzzle Game Logic ---
+  let tiles = [1, 2, 3, 4, 5, 6, 7, '', 8]; // Start scrambled
+
+  function initPuzzle() {
+    renderPuzzle();
+    document.getElementById('puzzle-msg').style.display = 'none';
+  }
+
+  function renderPuzzle() {
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+    tiles.forEach((val, index) => {
+      const tile = document.createElement('div');
+      tile.className = 'puzzle-tile' + (val === '' ? ' empty' : '');
+      tile.innerText = val;
+      tile.onclick = () => moveTile(index);
+      board.appendChild(tile);
     });
-    if(screenName === 'home') {
-      document.getElementById('home-screen').classList.add('active');
-    } else if(screenName === 'quiz') {
-      document.getElementById('quiz-screen').classList.add('active');
-    } else if(screenName === 'referral') {
-      document.getElementById('referral-screen').classList.add('active');
+  }
+
+  function moveTile(index) {
+    const emptyIndex = tiles.indexOf('');
+    const validMoves = [index - 1, index + 1, index - 3, index + 3];
+    
+    // Check row boundaries
+    const isAdjacent = (
+      (Math.abs(index - emptyIndex) === 1 && Math.floor(index / 3) === Math.floor(emptyIndex / 3)) ||
+      Math.abs(index - emptyIndex) === 3
+    );
+
+    if (isAdjacent) {
+      tiles[emptyIndex] = tiles[index];
+      tiles[index] = '';
+      renderPuzzle();
+      checkPuzzleWin();
     }
   }
 
+  function checkPuzzleWin() {
+    const winState = [1, 2, 3, 4, 5, 6, 7, 8, ''];
+    if(tiles.join(',') === winState.join(',')) {
+      const msg = document.getElementById('puzzle-msg');
+      msg.style.display = 'block';
+      msg.innerText = '🎉 बधाई हो! आपने पहेली सुलझा ली! (+20 कॉइन्स)';
+      msg.style.background = '#1e4620';
+      coins += 20;
+      document.getElementById('coins').innerText = coins;
+    }
+  }
+
+  // --- Quiz Game Logic ---
   function answerQuiz(isCorrect) {
     const msg = document.getElementById('quiz-msg');
     msg.style.display = 'block';
     if(isCorrect) {
       score += 10;
+      coins += 10;
       document.getElementById('score').innerText = score;
-      msg.innerText = 'Shaandaar! Sahi Jawab. (+10 Score)';
+      document.getElementById('coins').innerText = coins;
+      msg.innerText = '✅ शानदार! सही जवाब। (+10 स्कोर, +10 कॉइन्स)';
       msg.style.background = '#1e4620';
     } else {
-      msg.innerText = 'Galat Jawab! Dobara koshish karein.';
+      msg.innerText = '❌ गलत जवाब! दोबारा कोशिश करें।';
       msg.style.background = '#4a1e1e';
     }
   }
