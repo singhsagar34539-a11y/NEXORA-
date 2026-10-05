@@ -255,3 +255,113 @@ input{
 
 .premium p{
   color:#c9d0e5;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">NEX<span>ORA</span></div>
+  <button class="menu-btn" onclick="showScreen('home')">☰</button>
+</header>
+
+<div class="container">
+  <!-- Home Screen -->
+  <div id="home-screen" class="screen active">
+    <div class="hero">
+      <h1>Play. <span>Skill Up.</span> Grow.</h1>
+      <p>Khele aur naye skills sikhein daily challenges ke saath!</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <b id="score">0</b>
+        <small>Score</small>
+      </div>
+      <div class="stat">
+        <b>Level 1</b>
+        <small>Level</small>
+      </div>
+      <div class="stat">
+        <b>100</b>
+        <small>Coins</small>
+      </div>
+    </div>
+
+    <div class="games">
+      <div class="card" onclick="showScreen('quiz')">
+        <div class="icon">🧠</div>
+        <h3>Skill Quiz</h3>
+        <p>Aapke dimag ki kasrat</p>
+      </div>
+      <div class="card" onclick="showScreen('referral')">
+        <div class="icon">🎁</div>
+        <h3>Refer & Earn</h3>
+        <p>Friends ko bulayein</p>
+      </div>
+    </div>
+
+    <div class="premium">
+      <h2>Go Premium 🚀</h2>
+      <p>Unlock karein special games aur unlimited rewards.</p>
+      <button class="primary">Upgrade Now</button>
+    </div>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quiz-screen" class="screen">
+    <button class="back" onclick="showScreen('home')">← Wapas Jayein</button>
+    <div class="game-box">
+      <h3>Skill Quiz Challenge</h3>
+      <div class="question" id="quiz-question">Web development me HTML ka matlab kya hai?</div>
+      <button class="option" onclick="answerQuiz(true)">HyperText Markup Language</button>
+      <button class="option" onclick="answerQuiz(false)">HighText Machine Language</button>
+      <button class="option" onclick="answerQuiz(false)">Hyperlink Text Model</button>
+      <div id="quiz-msg" class="message" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Referral Screen -->
+  <div id="referral-screen" class="screen">
+    <button class="back" onclick="showScreen('home')">← Wapas Jayein</button>
+    <div class="ref-box">
+      <h3>Apna Referral Code Share Karein</h3>
+      <div class="ref-code">NEXORA2026</div>
+      <button class="primary" onclick="alert('Code copy ho gaya!')">Copy Code</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let score = 0;
+
+  function showScreen(screenName) {
+    document.querySelectorAll('.screen').forEach(screen => {
+      screen.classList.remove('active');
+    });
+    if(screenName === 'home') {
+      document.getElementById('home-screen').classList.add('active');
+    } else if(screenName === 'quiz') {
+      document.getElementById('quiz-screen').classList.add('active');
+    } else if(screenName === 'referral') {
+      document.getElementById('referral-screen').classList.add('active');
+    }
+  }
+
+  function answerQuiz(isCorrect) {
+    const msg = document.getElementById('quiz-msg');
+    msg.style.display = 'block';
+    if(isCorrect) {
+      score += 10;
+      document.getElementById('score').innerText = score;
+      msg.innerText = 'Shaandaar! Sahi Jawab. (+10 Score)';
+      msg.style.background = '#1e4620';
+    } else {
+      msg.innerText = 'Galat Jawab! Dobara koshish karein.';
+      msg.style.background = '#4a1e1e';
+    }
+  }
+</script>
+
+</body>
+</html>
